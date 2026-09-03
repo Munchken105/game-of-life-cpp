@@ -2,7 +2,10 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
 
+using namespace std;
 
 /*conway's game of life
 Rules:
@@ -14,6 +17,8 @@ Rules:
 
 4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproducation.
 */
+
+//TODO: be able to decide what cells start alive or dead
 
 
 const int ROWS = 20;
@@ -27,8 +32,8 @@ enum cell {
 
 std::vector<std::vector<cell>> v(ROWS, std::vector<cell>(COLS,dead));
 
-//edit board to be able to take input from the user to decide which board is dead or alive
-int game_board(){
+
+void game_board(){
     
     for (int r = 0; r < v.size(); r++){
         for (int c = 0; c < v[r].size(); c++){
@@ -46,7 +51,7 @@ int game_board(){
 }
 
 //checks if cell should be alive or dead in the next generation.
-int check_cell(int r,int c){
+cell check_cell(int r,int c){
             //if column 0 and 19 than cant check the column to the left and right
             //write basic one for each case than worry about edge case
 
@@ -63,23 +68,28 @@ int check_cell(int r,int c){
 
             //loop through the adjacent cells, 
             for (int r_offset = r-1; r_offset <= r + 1; r_offset++){
+
                 for(int c_offset = c-1; c_offset <= c + 1; c_offset++){
-                    cell cell; 
-                    if(cell == v[r_offset][c_offset]){
+                    
+                    if(r_offset == r && c_offset == c){
                         continue;
                     }
 
-                    if(r_offset >= 0 && r_offset < ROWS && c_offset < 0 && c_offset >= 0 && c_offset < ROWS){
-                        cell = v[r_offset][c_offset]
-                        if (cell == alive){
-                            adj_cell++;
-                        }
+                    // dont access bad memory
+                    if(r_offset < 0 || r_offset >= ROWS || c_offset < 0 || c_offset >= COLS){
+                        continue;
                     }
 
-                    
-                }    
 
-                //if cell is alive
+                    cell cell = v[r_offset][c_offset];
+
+                    if (cell == alive){
+                        adj_cell++;
+  
+                    }    
+                }
+            }
+                    //if cell is alive
                 if (curr_cell == alive){
                     if(adj_cell == 2 || adj_cell == 3){
                         return alive;
@@ -95,25 +105,48 @@ int check_cell(int r,int c){
                     }
                     return dead;
                 }
-            }
-
-
 }
 
+
+void cls(){
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::cout << "\x18[2J";
+}
  
 //check cells neighbors
 int main(){
 
-    //initlize game board
-    game_board();
+    //teseting manuualy for now
+    v[2][3] = alive;
+    v[3][4] = alive;
+    v[4][4] = alive;
+    v[4][3] = alive;
+    v[4][2] = alive;
+
+    //use check_cell to check if that cell should be alive or dead. than go to next generation
+    for(;;){
+
+        vector<vector<cell>> v_next = v; 
+
+        game_board();
+
+        for (int r = 0; r < ROWS; r++){
+            for (int c = 0; c < COLS; c++){
+               //check if the cell should be alive or dead in the next gen
+                cell cell_status = check_cell(r, c);
+
+                //set cell to alive or dead depending on the rules
+                v_next[r][c] = cell_status;
+
+                //clear screen/ print 100 new lines (idk why theres no method to this nativley in c++ lil silly)
+            }
+        }
+        cls();
+
+        v = v_next;
+        
+    }
 }
-
-
-
-
-
-
-
 
 
 
