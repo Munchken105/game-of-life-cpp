@@ -1,6 +1,6 @@
 # Conways Game of Life in C++.
 
-The implementation is a fixed array implementation this was for me to learn the basic syntax of c++.
+The implementation is a fixed array implementation. I made this project to learn the basic syntax of c++
 
 
 ## How to use
