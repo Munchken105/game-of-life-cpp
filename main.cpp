@@ -122,22 +122,55 @@ void user_input(){
         std::getline(std::cin, data);
         //
         if(data == "done"){
-            break;
+            return;
         }
+
+        std::istringstream input(data);
+
+        std::string line;
+
+        int row;
+        int col;
+        int counter = 0;
+        
+        while(std::getline(input, line, ',')){
+            try{
+                int number = std::stoi(line);
+                
+                if(number < 0 || number >= ROWS){
+                    std::cout << "try again invalid cant be less than 0 or greater than 19\n";
+                    break;    
+                }
+                if (counter == 0){
+                    row = number;
+                }
+
+                else if (counter == 1){
+                    col = number;
+                }
+
+                if (counter > 2){
+                    std::cout << "had to many numbers\n";
+                    break;
+                }
+                counter++;
+            }
+            catch (std::invalid_argument const& ex){
+                std::cout << "std::invalid argument" << ex.what() << '\n';
+                break;
+            }
+        }
+        
+        if(counter == 2){
+            v[row][col] = alive;
+        } 
     }
 }
+
  
 //check cells neighbors
 int main(){
-
-    //teseting manuualy for now
-    v[2][3] = alive;
-    v[3][4] = alive;
-    v[4][4] = alive;
-    v[4][3] = alive;
-    v[4][2] = alive;
-
-    std::cout << "Enter what cells you want to alive type done when you're done. format: row,col ex. 2,5 ";
+    std::cout << "Enter what cells you want to alive type done when you're done. format: row,col ex. 2,5\n";
 
     user_input();
 
@@ -158,7 +191,7 @@ int main(){
                 v_next[r][c] = cell_status;
             }
         }
-        cls();wsr
+        cls();
         //set the next game board to the new gameboard
         v = v_next;       
     }
