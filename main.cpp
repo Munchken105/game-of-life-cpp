@@ -15,11 +15,6 @@ Rules:
 4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproducation.
 */
 
-/*implementation ideas. 
-
-use a array for the rowXcolumns of the 2d grid.
-
-*/
 
 const int ROWS = 20;
 
@@ -51,19 +46,59 @@ int game_board(){
 }
 
 //checks if cell should be alive or dead in the next generation.
-int check_cell(cell cell, int r,int c){
+int check_cell(int r,int c){
             //if column 0 and 19 than cant check the column to the left and right
             //write basic one for each case than worry about edge case
 
             //assume each is alive and than go down, if there is less than 3 but more than 2 alive celss than your good, etc. so if each cell has 8 neighbors besides edge case 
-            int adj_cell = 0 
-
+            
             //edge cases: that i can think of currently
             // if the row is 0 than you cant go up
             //if the col is 0 than you cant go left
-            // if the row is ROWS-1 than you cant go right
-            // if the 
+            // if the row is ROWS-1 than you cant go down
+            // if the col os COLS-1 than you cant go up
 
+            cell curr_cell = v[r][c];
+            int adj_cell = 0; 
+
+            //loop through the adjacent cells, 
+            for (int r_offset = r-1; r_offset <= r + 1; r_offset++){
+                for(int c_offset = c-1; c_offset <= c + 1; c_offset++){
+                    cell cell; 
+                    if(cell == v[r_offset][c_offset]){
+                        continue;
+                    }
+
+                    if(r_offset >= 0 && r_offset < ROWS && c_offset < 0 && c_offset >= 0 && c_offset < ROWS){
+                        cell = v[r_offset][c_offset]
+                        if (cell == alive){
+                            adj_cell++;
+                        }
+                    }
+
+                    
+                }    
+
+                //if cell is alive
+                if (curr_cell == alive){
+                    if(adj_cell == 2 || adj_cell == 3){
+                        return alive;
+                    }
+                    return dead;
+                }
+
+                //dead
+                else{
+
+                    if(adj_cell == 3){
+                        return alive;
+                    }
+                    return dead;
+                }
+            }
+
+
+}
 
  
 //check cells neighbors
