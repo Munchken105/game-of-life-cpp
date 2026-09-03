@@ -4,6 +4,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include<sstream>
 
 using namespace std;
 
@@ -32,9 +33,9 @@ enum cell {
 
 std::vector<std::vector<cell>> v(ROWS, std::vector<cell>(COLS,dead));
 
-
+//function that handles gameboard logic.
 void game_board(){
-    
+    //loop through rows and collumns
     for (int r = 0; r < v.size(); r++){
         for (int c = 0; c < v[r].size(); c++){
 
@@ -107,10 +108,23 @@ cell check_cell(int r,int c){
                 }
 }
 
-
+//clear screen function/ it really just moves cursor to the top left of the screen and makes the program sleep for 1000ms so you can see the changes more clearly
 void cls(){
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    std::cout << "\x18[2J";
+    //escape charcter
+    std::cout << "\x1B[H";
+}
+
+void user_input(){
+    std::string data;
+
+    for(;;){
+        std::getline(std::cin, data);
+        //
+        if(data == "done"){
+            break;
+        }
+    }
 }
  
 //check cells neighbors
@@ -123,11 +137,16 @@ int main(){
     v[4][3] = alive;
     v[4][2] = alive;
 
+    std::cout << "Enter what cells you want to alive type done when you're done. format: row,col ex. 2,5 ";
+
+    user_input();
+
     //use check_cell to check if that cell should be alive or dead. than go to next generation
     for(;;){
 
         vector<vector<cell>> v_next = v; 
 
+        //prints gameboard
         game_board();
 
         for (int r = 0; r < ROWS; r++){
@@ -137,14 +156,11 @@ int main(){
 
                 //set cell to alive or dead depending on the rules
                 v_next[r][c] = cell_status;
-
-                //clear screen/ print 100 new lines (idk why theres no method to this nativley in c++ lil silly)
             }
         }
-        cls();
-
-        v = v_next;
-        
+        cls();wsr
+        //set the next game board to the new gameboard
+        v = v_next;       
     }
 }
 
